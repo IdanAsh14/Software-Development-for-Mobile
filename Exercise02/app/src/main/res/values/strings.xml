@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Game Of Thrones</string>
+    <string name="stark_button">stark_button</string>
+    <string name="lannister_button">lannister_button</string>
+    <string name="game_of_thrones">GAME OF THRONES</string>
+    <string name="house_lannister">House Lannister</string>
+    <string name="house_stark">House Stark</string>
+    <string name="pick_your_house">Pick Your House</string>
+</resources>
