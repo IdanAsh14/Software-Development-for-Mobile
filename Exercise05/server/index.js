@@ -19,10 +19,9 @@ app.get('/stock', (req, res) => {
     let url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${DEFAULT_STOCK}&apikey=${apiKey}`;
     request(url, function (err, response, body) {
         if(err){
-            console.log('error:', error);
-            return res.status(500).error(err);
+            return res.status(500).json({err: err.message});
         } else {
-            let stock = JSON.parse(body)
+            let stock = JSON.parse(body);
             let message = `${stock["Global Quote"]["01. symbol"]} stock price is ${stock["Global Quote"]["05. price"]}.`;
             console.log(message);
             return res.status(200).json(stock);
@@ -39,10 +38,12 @@ app.post('/stock', (req, res) => {
     let url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${newStock}&apikey=${apiKey}`;
     request(url, function (err, response, body) {
         if(err){
-            console.log('error:', error);
-            return res.status(500).error(err);
+            return res.status(500).json({err: err.message});
         } else {
-            let stock = JSON.parse(body)
+            let stock = JSON.parse(body);
+            if(stock.hasOwnProperty('Error Message')){
+                return res.status(500).json({err: stock['Error Message']});
+            }
             let message = `${stock["Global Quote"]["01. symbol"]} stock price is ${stock["Global Quote"]["05. price"]}.`;
             console.log(message);
             return res.status(200).json(stock);
