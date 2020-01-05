@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Alpha Vantage Stock</string>
+    <string name="stock_name">Stock Name:</string>
+    <string name="price">Price:</string>
+    <string name="fetch">Fetch</string>
+    <string name="msft">MSFT</string>
 </resources>

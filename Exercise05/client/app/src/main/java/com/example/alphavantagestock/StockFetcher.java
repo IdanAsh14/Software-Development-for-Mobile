@@ -11,16 +11,19 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
 public class StockFetcher {
+
     private RequestQueue _queue;
-    private final static String REQUEST_URL = "http://192.168.1.32:8080/weather";
+
+    private final static String REQUEST_URL = "http://10.0.0.131:8080/stock";
 
     public class StockResponse {
         public boolean isError;
         public String name;
-        public int price;
+        public double price;
 
-        public StockResponse(boolean isError, String name, int price) {
+        public StockResponse(boolean isError, String name, double price) {
             this.isError = isError;
             this.name = name;
             this.price = price;
@@ -40,8 +43,17 @@ public class StockFetcher {
         return new StockResponse(true, null, 0);
     }
 
-    public void dispatchRequest(final StockResponseListener listener) {
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, REQUEST_URL, null,
+    public void dispatchRequest(String stockName, final StockResponseListener listener) {
+        JSONObject postBody = new JSONObject();
+        try {
+            postBody.put("stock", stockName);
+        }
+        catch (JSONException e) {
+            listener.onResponse(createErrorResponse());
+            return;
+        }
+
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, REQUEST_URL, postBody,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -49,7 +61,7 @@ public class StockFetcher {
                         try {
                             StockResponse res = new StockResponse(false,
                                     response.getJSONObject("Global Quote").getString("01. symbol"),
-                                    response.getJSONObject("Global Quote").getInt("05. price"));
+                                    response.getJSONObject("Global Quote").getDouble("05. price"));
                             listener.onResponse(res);
                         }
                         catch (JSONException e) {
