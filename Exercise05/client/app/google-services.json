@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "197127160640",
+    "firebase_url": "https://alpha-vantage-stock.firebaseio.com",
+    "project_id": "alpha-vantage-stock",
+    "storage_bucket": "alpha-vantage-stock.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:197127160640:android:fe93a3e4aab59a9941b0a5",
+        "android_client_info": {
+          "package_name": "com.example.alphavantagestock"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "197127160640-sp6t7nqn9vk3bqcgbhmnmfkuaptlkogp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.alphavantagestock",
+            "certificate_hash": "147a3976ec92ece9062838a335f1f43b3030d7db"
+          }
+        },
+        {
+          "client_id": "197127160640-0i4f3b21dv34vo1jqscp8aiue1ntib0k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbxi-ymJs4KsQEWhv4nntVpVrI3lqiVPg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "197127160640-0i4f3b21dv34vo1jqscp8aiue1ntib0k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

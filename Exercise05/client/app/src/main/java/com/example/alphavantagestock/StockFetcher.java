@@ -1,7 +1,9 @@
 package com.example.alphavantagestock;
 
 import android.content.Context;
+import android.util.Log;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -15,37 +17,33 @@ import org.json.JSONObject;
 public class StockFetcher {
 
     private RequestQueue _queue;
-
+    private static final String TAG = "StockFetcher";
     private final static String REQUEST_URL = "http://10.0.0.131:8080/stock";
-
-    public class StockResponse {
-        public boolean isError;
-        public String name;
-        public double price;
-
-        public StockResponse(boolean isError, String name, double price) {
-            this.isError = isError;
-            this.name = name;
-            this.price = price;
-        }
-
-    }
-
-    public interface StockResponseListener {
-        public void onResponse(StockResponse response);
-    }
 
     public StockFetcher(Context context) {
         _queue = Volley.newRequestQueue(context);
     }
 
-    private StockResponse createErrorResponse() {
-        return new StockResponse(true, null, 0);
+    public class StockResponse {
+        public boolean isError;
+
+        public StockResponse(boolean isError) {
+            this.isError = isError;
+        }
     }
 
-    public void dispatchRequest(String stockName, final StockResponseListener listener) {
+    public interface StockResponseListener {
+        void onResponse(StockResponse response);
+    }
+
+    private StockResponse createErrorResponse() {
+        return new StockResponse(true);
+    }
+
+    public void dispatchRequest(String stockName, int id, final StockResponseListener listener) {
         JSONObject postBody = new JSONObject();
         try {
+            postBody.put("id", id);
             postBody.put("stock", stockName);
         }
         catch (JSONException e) {
@@ -57,24 +55,18 @@ public class StockFetcher {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-
-                        try {
-                            StockResponse res = new StockResponse(false,
-                                    response.getJSONObject("Global Quote").getString("01. symbol"),
-                                    response.getJSONObject("Global Quote").getDouble("05. price"));
-                            listener.onResponse(res);
-                        }
-                        catch (JSONException e) {
-                            listener.onResponse(createErrorResponse());
-                        }
+                        Log.i(TAG, "POST Request sent successfully");
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onResponse(createErrorResponse());
+                Log.e(TAG, "Failed to sent POST Request - " + error);
             }
         });
-
+        req.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         _queue.add(req);
     }
 }
