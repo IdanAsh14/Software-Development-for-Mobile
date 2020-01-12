@@ -7,7 +7,6 @@ const serviceAccountKey = require('/Users/idan/Desktop/alpha-vantage-stock-fireb
 
 const PORT = 8080;
 let alphavantgeApiKey = '3IGR30B8QW9DPS2R';
-let FCM_SERVER_KEY = 'AIzaSyCDB94gLh72qKhR81LXJTPyLTJ-NIr3jHc';
 const DEFAULT_STOCK = 'MSFT'; // microsoft stock
 var tokens = {};
 var id_counter = 1;
