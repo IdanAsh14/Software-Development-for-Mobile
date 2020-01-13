@@ -1,5 +1,6 @@
 package com.example.alphavantagestock;
 
+
 import android.content.Context;
 import android.util.Log;
 
@@ -18,7 +19,7 @@ public class StockFetcher {
 
     private RequestQueue _queue;
     private static final String TAG = "StockFetcher";
-    private final static String REQUEST_URL = "http://10.0.0.131:8080/stock";
+    private final static String REQUEST_URL = "http://10.0.0.131:8080/";
 
     public StockFetcher(Context context) {
         _queue = Volley.newRequestQueue(context);
@@ -51,7 +52,7 @@ public class StockFetcher {
             return;
         }
 
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, REQUEST_URL, postBody,
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, REQUEST_URL + id + "/stock", postBody,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

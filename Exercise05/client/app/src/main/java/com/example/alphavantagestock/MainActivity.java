@@ -1,8 +1,8 @@
 package com.example.alphavantagestock;
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,10 +23,10 @@ import com.google.firebase.iid.InstanceIdResult;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private Button fetchButton;
+    private Button mFetchButton;
     private String mToken;
     private int mUserID;
-    private MyBroadcastReceiver mReceiver = new MyBroadcastReceiver();
+    private FirebaseMessagingReceiver mReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +34,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         retrieveToken();
 
-        fetchButton = findViewById(R.id.fetch_button);
-        fetchButton.setOnClickListener(new View.OnClickListener() {
+        mFetchButton = findViewById(R.id.fetch_button);
+        mFetchButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 fetchStock(view);
             }
         });
@@ -47,18 +46,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mReceiver = new FirebaseMessagingReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("com.my.app.onMessageReceived");
         registerReceiver(mReceiver, intentFilter);
     }
 
     @Override
-    public void onDestroy(){
+    protected void onDestroy(){
         super.onDestroy();
         unregisterReceiver(mReceiver);
     }
 
-    public void fetchStock(final View view) {
+    private void fetchStock(final View view) {
         final StockFetcher fetcher = new StockFetcher(view.getContext());
         final String stockName = ((EditText)findViewById(R.id.edit_stock)).getText().toString();
 
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void retrieveToken(){
+    private void retrieveToken(){
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
                         // Get new Instance ID token
                         mToken = task.getResult().getToken();
-                        fetchToken(getApplicationContext(),mToken);
+                        sendToken(getApplicationContext(),mToken);
                         // Log
                         String msg = getString(R.string.msg_token_fmt, mToken);
                         Log.e(TAG, msg);
@@ -93,9 +93,9 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    public void fetchToken(final Context context, String token) {
-        final SendTokenToServer fetcher = new SendTokenToServer(context);
-        fetcher.dispatchRequest(token , mUserID,new SendTokenToServer.TokenResponseListener() {
+    private void sendToken(final Context context, String token) {
+        final SendTokenToServer sender = new SendTokenToServer(context);
+        sender.dispatchRequest(token , mUserID,new SendTokenToServer.TokenResponseListener() {
             @Override
             public void onResponse(SendTokenToServer.TokenResponse response) {
 
@@ -109,14 +109,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private class MyBroadcastReceiver extends BroadcastReceiver {
+    private class FirebaseMessagingReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle extras = intent.getExtras();
-            String name = extras.getString("name");
+            String stockName = extras.getString("stock name");
             String price = extras.getString("price");
+            price = price.substring(0,  price.length() - 2);
             String time = extras.getString("time");
-            updateView(name, price, time);// update your textView in the main layout
+            updateView(stockName, price, time);
         }
     }
 

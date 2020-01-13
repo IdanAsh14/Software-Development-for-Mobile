@@ -1,5 +1,6 @@
 package com.example.alphavantagestock;
 
+
 import android.content.Context;
 import android.util.Log;
 
@@ -18,7 +19,6 @@ public class SendTokenToServer {
     private RequestQueue _queue;
     private static final String TAG = "SendTokenToServer";
     private final static String REQUEST_URL = "http://10.0.0.131:8080/";
-    private static final String USERNAME = "username"; // this would be derived from the user data in a real application!
 
     public class TokenResponse {
         public boolean isError;

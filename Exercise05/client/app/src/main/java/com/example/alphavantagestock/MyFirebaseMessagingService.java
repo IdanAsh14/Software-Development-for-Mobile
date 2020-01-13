@@ -1,10 +1,7 @@
 package com.example.alphavantagestock;
 
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -46,9 +43,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         JSONObject requestObject = new JSONObject();
         try {
             requestObject.put("token", token);
-        }
-        catch (JSONException e) {
-
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, REQUEST_URL + USERNAME + "/token", requestObject,
@@ -78,12 +74,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "name: " + remoteMessage.getData().get("name"));
             Log.d(TAG, "price: " + remoteMessage.getData().get("price"));
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-            String currentDateandTime = sdf.format(new Date());
-            Log.d(TAG, "time: " + currentDateandTime);
+            String currentTime = sdf.format(new Date());
+            Log.d(TAG, "time: " + currentTime);
             Intent intent = new Intent();
-            intent.putExtra("name", remoteMessage.getData().get("name"));
+            intent.putExtra("stock name", remoteMessage.getData().get("name"));
             intent.putExtra("price", remoteMessage.getData().get("price"));
-            intent.putExtra("time", currentDateandTime);
+            intent.putExtra("time", currentTime);
             intent.setAction("com.my.app.onMessageReceived");
             sendBroadcast(intent);
         }
