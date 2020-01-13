@@ -6,7 +6,7 @@ const admin = require('firebase-admin');
 const serviceAccountKey = require('/Users/idan/Desktop/alpha-vantage-stock-firebase-adminsdk-vrbad-bfb18115b6.json')
 
 const PORT = 8080;
-let alphavantgeApiKey = '3IGR30B8QW9DPS2R';
+let alphaVantageApiKey = '3IGR30B8QW9DPS2R';
 const DEFAULT_STOCK = 'MSFT'; // microsoft stock
 var tokens = {};
 var id_counter = 1;
@@ -37,7 +37,7 @@ app.post('/:user/token', (req, res, next) => {
         console.log(`Received new token request from ${id_counter} for token=${token}`);
         id_counter++;
     }
-    //exist user, new token
+    //exist user
     else {
         tokens[id]["token"] = token;
         obj = {"id": id};
@@ -47,6 +47,7 @@ app.post('/:user/token', (req, res, next) => {
     res.status(200).json(obj);
 });
 
+//check if the token exist, if yes return the user id, else return -1
 function isTokenExist(token){
     var id = -1;
     Object.keys(tokens).forEach(key => {
@@ -58,24 +59,23 @@ function isTokenExist(token){
 }
 
 // user request stock 
-app.post('/stock', (req, res) => {
+app.post('/:user/stock', (req, res) => {
     console.dir(req.body);
     let newStock = req.body.stock || DEFAULT_STOCK;
     let id = req.body.id;
     tokens[id]["stock"] =  newStock;
-    console.log("Got POST request to /stock, using stock=" + newStock);
+    console.log(`Got POST request to ${id}/stock, using stock=` + newStock);
     getStock(id);
     if(intervalId !== -1){
         clearInterval(intervalId);
         intervalId = -1;
     }
     intervalId = setInterval(getStock, 15000, [id]);
-    // getStock(id);
     return res.status(200);
 });
 
 function getStock(id){
-    let url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${tokens[id]["stock"]}&apikey=${alphavantgeApiKey}`;
+    let url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${tokens[id]["stock"]}&apikey=${alphaVantageApiKey}`;
     request(url, function (err, response, body) {
         if(err){
             return err;
@@ -86,10 +86,8 @@ function getStock(id){
             let message = `${stockName} stock price is ${stockPrice}.`;
             console.log(message);
             sendMessageToFCM(id, stockName, stockPrice);
-            // return;
         }
     });
-    // return;
 }
 
 function sendMessageToFCM(id, stockName, price){
@@ -103,13 +101,11 @@ function sendMessageToFCM(id, stockName, price){
     
     admin.messaging().send(message)
     .then((response) => {
-        // Response is a message ID string.
         console.log('Successfully sent message:', response);
     })
     .catch((error) => {
         console.log('Error sending message:', error);
     });
-    // return;
 }
 
 app.listen(PORT, () => {
