@@ -70,16 +70,24 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-            Log.d(TAG, "name: " + remoteMessage.getData().get("name"));
-            Log.d(TAG, "price: " + remoteMessage.getData().get("price"));
+            Intent intent = new Intent();
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
             String currentTime = sdf.format(new Date());
-            Log.d(TAG, "time: " + currentTime);
-            Intent intent = new Intent();
-            intent.putExtra("stock name", remoteMessage.getData().get("name"));
-            intent.putExtra("price", remoteMessage.getData().get("price"));
-            intent.putExtra("time", currentTime);
+            if(remoteMessage.getData().get("price").compareTo("-1") != 0){
+                Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+                Log.d(TAG, "name: " + remoteMessage.getData().get("name"));
+                Log.d(TAG, "price: " + remoteMessage.getData().get("price"));
+                Log.d(TAG, "time: " + currentTime);
+                intent.putExtra("stock name", remoteMessage.getData().get("name"));
+                intent.putExtra("price", remoteMessage.getData().get("price"));
+                intent.putExtra("time", currentTime);
+
+            }
+            else {
+                intent.putExtra("stock name", remoteMessage.getData().get("name"));
+                intent.putExtra("price", "0.0000");
+                intent.putExtra("time", currentTime);
+            }
             intent.setAction("com.my.app.onMessageReceived");
             sendBroadcast(intent);
         }

@@ -115,7 +115,9 @@ public class MainActivity extends AppCompatActivity {
             Bundle extras = intent.getExtras();
             String stockName = extras.getString("stock name");
             String price = extras.getString("price");
+            Log.e(TAG, price);
             price = price.substring(0,  price.length() - 2);
+            Log.e(TAG, price);
             String time = extras.getString("time");
             updateView(stockName, price, time);
         }

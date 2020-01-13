@@ -81,11 +81,17 @@ function getStock(id){
             return err;
         } else {
             let stock = JSON.parse(body);
-            let stockName = stock["Global Quote"]["01. symbol"];
-            let stockPrice = stock["Global Quote"]["05. price"];
-            let message = `${stockName} stock price is ${stockPrice}.`;
-            console.log(message);
-            sendMessageToFCM(id, stockName, stockPrice);
+            if (stock.hasOwnProperty("Global Quote")){
+                let stockName = stock["Global Quote"]["01. symbol"];
+                let stockPrice = stock["Global Quote"]["05. price"];
+                let message = `${stockName} stock price is ${stockPrice}.`;
+                console.log(message);
+                sendMessageToFCM(id, stockName, stockPrice);
+            } else {
+                clearInterval(intervalId);
+                intervalId = -1;
+                sendMessageToFCM(id, "The stock didn't found", "-1");
+            }
         }
     });
 }
