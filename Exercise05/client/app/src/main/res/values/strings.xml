@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Alpha Vantage Stock</string>
+    <string name="stock_name">Stock Name:</string>
+    <string name="price">Price:</string>
+    <string name="fetch">Fetch</string>
+    <string name="msft">MSFT</string>
+    <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
+    <string name="Last_update">Last Update</string>
+</resources>
